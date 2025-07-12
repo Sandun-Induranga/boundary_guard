@@ -129,7 +129,9 @@ class BoundaryGuard {
 
       try {
         _currentPosition = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high,
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+          ),
         );
         _wasInsideBoundary = _isInsideGeofence(
           _currentPosition!.latitude,
@@ -188,8 +190,9 @@ class BoundaryGuard {
       }
 
       _currentPosition = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-        timeLimit: const Duration(seconds: 60),
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       ).timeout(
         const Duration(seconds: 60),
         onTimeout: () {
