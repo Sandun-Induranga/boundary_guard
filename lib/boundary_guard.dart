@@ -3,7 +3,13 @@ import 'dart:math' as math;
 
 import 'package:geolocator/geolocator.dart';
 
-/// A service for monitoring geofence boundaries and providing location updates with messages.
+/// A service for monitoring geofence boundaries and providing location updates
+/// with messages.
+///
+/// Use [startTracking] to begin monitoring, [checkIfOutsideBoundary] to manually
+/// check the boundary, [stopTracking] to end monitoring, and [dispose] to clean
+/// up resources. The [onUpdate] callback provides real-time updates for position,
+/// boundary status, and messages.
 class BoundaryGuard {
   StreamSubscription<Position>? _positionStreamSubscription;
   bool _wasInsideBoundary = true;
@@ -15,10 +21,11 @@ class BoundaryGuard {
   String? _message;
   bool _isOutsideBoundary = false;
 
-  /// Callback to notify state changes (position, boundary status, or messages).
-  final void Function(Position? position, bool isOutsideBoundary, String? message)?
-  onUpdate;
+  /// Callback to notify state changes with position, boundary status, and messages.
+  final void Function(
+      Position? position, bool isOutsideBoundary, String? message)? onUpdate;
 
+  /// Creates a [BoundaryGuard] instance with an optional [onUpdate] callback.
   BoundaryGuard({this.onUpdate});
 
   /// Current position of the device.
@@ -30,8 +37,9 @@ class BoundaryGuard {
   /// Current message (e.g., boundary violation or error).
   String? get message => _message;
 
-  /// Calculate distance using Haversine formula (in meters).
-  double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+  /// Calculates the distance between two points using the Haversine formula (in meters).
+  double _calculateDistance(
+      double lat1, double lon1, double lat2, double lon2) {
     const double earthRadius = 6371000;
     double dLat = _degreesToRadians(lat2 - lat1);
     double dLon = _degreesToRadians(lon2 - lon1);
@@ -88,14 +96,14 @@ class BoundaryGuard {
           return false;
         } else if (permission == LocationPermission.deniedForever) {
           _message =
-          'Location permission denied forever. Please enable in settings.';
+              'Location permission denied forever. Please enable in settings.';
           onUpdate?.call(_currentPosition, _isOutsideBoundary, _message);
           await Geolocator.openAppSettings();
           return false;
         }
       } else if (permission == LocationPermission.deniedForever) {
         _message =
-        'Location permission denied forever. Please enable in settings.';
+            'Location permission denied forever. Please enable in settings.';
         onUpdate?.call(_currentPosition, _isOutsideBoundary, _message);
         await Geolocator.openAppSettings();
         return false;
@@ -108,7 +116,9 @@ class BoundaryGuard {
     }
   }
 
-  /// Start tracking location with respect to a geofence.
+  /// Starts tracking the device's location relative to a geofence defined by [radius]
+  /// (in meters) and [referencePosition]. Calls [onUpdate] with position, boundary
+  /// status, and messages.
   Future<void> startTracking(double radius, Position referencePosition) async {
     if (_isOperationInProgress) {
       _message = 'A tracking operation is already in progress. Please wait.';
@@ -170,7 +180,7 @@ class BoundaryGuard {
     }
   }
 
-  /// Check if the current position is outside the geofence.
+  /// Checks if the current position is outside the geofence and updates [onUpdate].
   Future<void> checkIfOutsideBoundary() async {
     try {
       if (_radius == null || _referencePosition == null) {
@@ -218,7 +228,7 @@ class BoundaryGuard {
     }
   }
 
-  /// Update position and check boundary.
+  /// Updates the position and checks the boundary status.
   void _updatePosition(Position position) {
     if (_radius == null || _referencePosition == null) {
       _message = 'Boundary parameters not set';
@@ -235,7 +245,7 @@ class BoundaryGuard {
     if (_wasInsideBoundary && !isInside) {
       _isOutsideBoundary = true;
       _message =
-      'You have moved outside the allowed boundary of ${_radius! / 1000} km';
+          'You have moved outside the allowed boundary of ${_radius! / 1000} km';
       _wasInsideBoundary = false;
     } else if (!_wasInsideBoundary && isInside) {
       _isOutsideBoundary = false;
@@ -246,7 +256,7 @@ class BoundaryGuard {
     onUpdate?.call(_currentPosition, _isOutsideBoundary, _message);
   }
 
-  /// Stop tracking location.
+  /// Stops tracking the device's location and clears resources.
   Future<void> stopTracking() async {
     if (_isOperationInProgress) {
       _message = 'A tracking operation is in progress. Please wait.';
@@ -269,7 +279,7 @@ class BoundaryGuard {
     }
   }
 
-  /// Clean up resources.
+  /// Cleans up resources used by the service.
   Future<void> dispose() async {
     await _positionStreamSubscription?.cancel();
     _positionStreamSubscription = null;

@@ -1,6 +1,6 @@
 name: boundary_guard
 description: A Flutter package for monitoring geofence boundaries and providing location updates with customizable messages.
-version: 1.0.1
+version: 1.0.2
 homepage: https://github.com/Sandun-Induranga/boundary_guard
 repository: https://github.com/Sandun-Induranga/boundary_guard
 

@@ -14,7 +14,7 @@ Add the following to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  boundary_guard: ^1.0.1
+  boundary_guard: ^1.0.2
 ```
 
 Then, run:
