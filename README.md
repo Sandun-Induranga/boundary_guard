@@ -27,8 +27,8 @@ flutter pub get
 
 Ensure you have the following dependencies in your `pubspec.yaml`:
 
-- `geolocator: ^10.1.0`
-- `permission_handler: ^11.0.0`
+- `geolocator: ^14.0.2`
+- `permission_handler: ^12.0.1`
 
 ### Usage
 
